@@ -51,12 +51,23 @@ const process = (acc, s) => {
   }
 };
 
+function cloneLineNumber(to, from) {
+  if (from && to && to.token && to.token.slice) {
+    to.token.slice.startLocation.line = from.token.slice.startLocation.line;
+    return to;
+  }
+  return to;
+}
+
 const replace = (acc, s) => {
-  if (isBraces(s) && isDolar(acc.template.last())) {
+  let last = acc.template.get(-1);
+  let beforeLast = acc.template.get(-2);
+  if (isBraces(s) && isDolar(last)) {
     let index = s.inner().first().val();
     assert(acc.rep.size > index, "unknown replacement value");
+    let replacement = cloneLineNumber(acc.rep.get(index), beforeLast);
     return {
-      template: acc.template.pop().concat(acc.rep.get(index)),
+      template: acc.template.pop().concat(replacement),
       rep: acc.rep
     };
   } else if (isDelimiter(s)) {
@@ -80,5 +91,3 @@ export function processTemplate(temp, interp = List()) {
 export function replaceTemplate(temp, rep) {
   return temp.reduce(replace, { template: List(), rep }).template;
 }
-
-
