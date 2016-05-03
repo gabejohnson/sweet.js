@@ -13,7 +13,7 @@ import BindingMap from "./binding-map.js";
 import Term from "./terms";
 import { Modules } from './modules';
 
-import { toSpiderMonkey as toBabel} from '../../shift-spidermonkey-converter-js/dist';
+import { toSpiderMonkey as toBabel} from 'shift-spidermonkey-converter';
 
 export function expand(source, options = {}) {
   let reader = new Reader(source);

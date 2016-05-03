@@ -6,6 +6,7 @@ import reducer, { MonoidalReducer } from "shift-reducer";
 import { makeDeserializer } from './serializer';
 import Syntax from "./syntax";
 import codegen, { FormattedCodeGen } from 'shift-codegen';
+import { toSpiderMonkey as toBabel} from 'shift-spidermonkey-converter';
 import { VarBindingTransform, CompiletimeTransform } from './transforms';
 import Term, {
   isEOF, isBindingIdentifier, isFunctionDeclaration, isFunctionExpression,
@@ -77,14 +78,9 @@ function loadForCompiletime(expr, context) {
     }))
   }));
 
-  // TODO: should just pass an AST to babel but the estree converter still
-  // needs some work so until then just gen a string
-  // let estree = convert.toSpiderMonkey(parsed);
-  // let result = transform.fromAst(wrapForCompiletime(estree, sandboxKeys));
-
-  // let result = babel.transform(wrapForCompiletime(estree, sandboxKeys));
-  let gen = codegen(parsed, new FormattedCodeGen);
-  let result = context.transform(gen, {
+  parsed = toBabel(parsed);
+  //let = codegen(parsed, new FormattedCodeGen);
+  let result = context.transform(parsed, {
     babelrc: true,
     filename: context.filename
   });
