@@ -45,9 +45,8 @@ export function parse(source, options = {}) {
 
 export function compile(source, options = {}) {
   let ast = parse(source, options);
-  let bAst= toBabel(ast);
-  return options.transform && (!options.noBabel) ? options.transform(bAst, {
+  return options.transform && (!options.noBabel) ? options.transform(toBabel(ast), {
     babelrc: true,
     filename: options.filename
-  }) : { code: gen };
+  }) : { code: codegen(ast, new FormattedCodeGen()) };
 }
