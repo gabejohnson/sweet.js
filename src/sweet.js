@@ -13,6 +13,8 @@ import BindingMap from "./binding-map.js";
 import Term from "./terms";
 import { Modules } from './modules';
 
+import { toSpiderMonkey as toBabel} from '../../shift-spidermonkey-converter-js/dist';
+
 export function expand(source, options = {}) {
   let reader = new Reader(source);
   let stxl = reader.read();
@@ -43,8 +45,8 @@ export function parse(source, options = {}) {
 
 export function compile(source, options = {}) {
   let ast = parse(source, options);
-  let gen = codegen(ast, new FormattedCodeGen());
-  return options.transform && (!options.noBabel) ? options.transform(gen, {
+  let bAst= toBabel(ast);
+  return options.transform && (!options.noBabel) ? options.transform(bAst, {
     babelrc: true,
     filename: options.filename
   }) : { code: gen };
